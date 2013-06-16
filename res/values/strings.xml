@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PhotoFrame</string>
+    <string name="pref_flickrUserId">Flickr User Id</string>
+    <string name="pref_flickrUserId_summ">The Flickr user id whose photos should be shown.</string>
+    <string name="prefs_menu_option">Preferences</string>
+</resources>
