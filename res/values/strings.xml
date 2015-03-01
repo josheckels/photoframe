@@ -3,5 +3,17 @@
     <string name="app_name">PhotoFrame</string>
     <string name="pref_flickrUserId">Flickr User Id</string>
     <string name="pref_flickrUserId_summ">The Flickr user id whose photos should be shown.</string>
+    <string name="loadingPhotosLabel">Loading photos...</string>
     <string name="prefs_menu_option">Preferences</string>
+
+    <style name="CaptionOverlay">
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:textColor">#ffffffff</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:shadowColor">#000000</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">2</item>
+    </style>
 </resources>

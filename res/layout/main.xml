@@ -1,17 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-        >
-    <ImageView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/imageView" android:layout_gravity="center" android:scaleType="fitCenter" />
-    <Button
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Settings"
-            android:id="@+id/button" android:visibility="visible"/>
-</LinearLayout>
+<RelativeLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:id="@+id/relativelayout"
+android:layout_width="fill_parent"
+android:layout_height="fill_parent" >
 
+<ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" android:background="#00000000"/>
+
+<TextView
+        android:id="@+id/imageCaption"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignLeft="@+id/imageView"
+        android:layout_alignRight="@+id/imageView"
+        android:layout_alignBottom="@+id/imageView"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:text="@string/loadingPhotosLabel"
+        style="@style/CaptionOverlay"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="1dp"
+        android:layout_marginBottom="1dp"/>
+
+<TextView
+        android:id="@+id/messageText"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignLeft="@+id/imageView"
+        android:layout_alignRight="@+id/imageView"
+        android:layout_alignTop="@+id/imageView"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:text="Delay: "
+        style="@style/CaptionOverlay"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="1dp"
+        android:layout_marginBottom="1dp"/>
+
+</RelativeLayout>

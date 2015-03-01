@@ -3,20 +3,28 @@ package com.jeckels.photoFrame;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.*;
 import android.widget.ImageView;
-import org.slf4j.LoggerFactory;
+import android.widget.TextView;
 
 public class PhotoDisplayActivity extends Activity
 {
-    private LoggerFactory _loggerFactory;
     private GetPhotosTask _task;
+
+    private GetPhotosTask.DisplayablePhoto _currentPhoto;
+
+    private GestureDetector _gestureDetector;
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        return _gestureDetector.onTouchEvent(event);
+    }
 
     /**
      * Called when the activity is first created.
@@ -30,48 +38,80 @@ public class PhotoDisplayActivity extends Activity
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        String flickrId = sharedPref.getString(SettingsActivity.KEY_PREF_SYNC_CONN, null);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
 
-        if (flickrId == null)
+        setContentView(R.layout.main);
+
+        final ImageView imageView = (ImageView) findViewById(R.id.imageView);
+        final TextView textView = (TextView) findViewById(R.id.imageCaption);
+        final TextView messageText = (TextView) findViewById(R.id.messageText);
+        messageText.setVisibility(View.INVISIBLE);
+        _gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener()
         {
-            startActivity(new Intent(this, SettingsActivity.class));
-        }
-        else
-        {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            private int _scroll = 0;
 
-            setContentView(R.layout.main);
-
-            final ImageView imageView = (ImageView) findViewById(R.id.imageView);
-            imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(PhotoDisplayActivity.this, SettingsActivity.class));
-                }
-            });
-
-
-            ConnectivityManager connMgr = (ConnectivityManager)
-                    getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-            if (networkInfo != null && networkInfo.isConnected())
+            @Override
+            public boolean onSingleTapUp(MotionEvent e)
             {
-                _task = new GetPhotosTask(getBaseContext())
+                textView.setVisibility(textView.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
+                return false;
+            }
+
+            @Override
+            public void onLongPress(MotionEvent e)
+            {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://jeckels.com/photoDetail?PhotoId=" + _currentPhoto.getPhoto().getPhotoId() + "&ReferringCategoryId=" + _currentPhoto.getCategory().getCategoryId()));
+                startActivity(browserIntent);
+            }
+
+            @Override
+            public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY)
+            {
+                _scroll += (int)distanceX;
+                if (Math.abs(_scroll) > 50)
                 {
-                    @Override
-                    protected void onPostExecute(Bitmap bitmap)
-                    {
-                        imageView.setImageBitmap(bitmap);
-                    }
-                };
-                _task.execute();
+                    int units = _scroll / 50;
+                    _scroll -= units * 50;
+                    _task.adjustTimer(units);
+                }
+                return super.onScroll(e1, e2, distanceX, distanceY);
             }
-            else
+        });
+
+
+
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected())
+        {
+            _task = new GetPhotosTask(getBaseContext(), messageText)
             {
-                // display error
-            }
+                @Override
+                protected void onPostExecute(DisplayablePhoto photo)
+                {
+                    imageView.setImageBitmap(photo.getBitmap());
+                    textView.setText(photo.getPhoto().getCaption());
+                    _currentPhoto = photo;
+                }
+            };
+            _task.execute();
+//            }
+//            else
+//            {
+//                // display error
+//            }
         }
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        _task.cancel();
+        finish();
     }
 
     @Override
@@ -79,6 +119,7 @@ public class PhotoDisplayActivity extends Activity
     {
         super.onStop();
         _task.cancel();
+        finish();
     }
 
     @Override

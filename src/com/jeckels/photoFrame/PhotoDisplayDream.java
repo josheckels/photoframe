@@ -1,18 +1,15 @@
 package com.jeckels.photoFrame;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.service.dreams.DreamService;
 import android.widget.ImageView;
-import org.slf4j.LoggerFactory;
+import android.widget.TextView;
 
 public class PhotoDisplayDream extends DreamService
 {
-    private LoggerFactory _loggerFactory;
     private GetPhotosTask _task;
 
     @Override
@@ -29,13 +26,13 @@ public class PhotoDisplayDream extends DreamService
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected())
         {
-            _task = new GetPhotosTask(getBaseContext())
+            _task = new GetPhotosTask(getBaseContext(), (TextView)findViewById(R.id.messageText))
             {
                 @Override
-                protected void onPostExecute(Bitmap bitmap)
+                protected void onPostExecute(DisplayablePhoto bitmap)
                 {
                     ImageView imageView = (ImageView) findViewById(R.id.imageView);
-                    imageView.setImageBitmap(bitmap);
+                    imageView.setImageBitmap(bitmap.getBitmap());
                 }
             };
             _task.execute();
