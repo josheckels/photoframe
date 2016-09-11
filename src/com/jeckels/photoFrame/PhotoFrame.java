@@ -111,7 +111,7 @@ public class PhotoFrame
             SimplePhoto photo = _photoIterator.next();
             Bitmap bitmap = downloadPhoto(photo);
 
-            return new GetPhotosTask.DisplayablePhoto(bitmap, photo, _category);
+            return new GetPhotosTask.DisplayablePhoto(bitmap, photo, _category, _photoStore);
         }
         catch (IOException e)
         {

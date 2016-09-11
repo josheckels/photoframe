@@ -45,7 +45,7 @@ public class PhotoDisplayActivity extends Activity
         setContentView(R.layout.main);
 
         final ImageView imageView = (ImageView) findViewById(R.id.imageView);
-        final TextView textView = (TextView) findViewById(R.id.imageCaption);
+        final TextView captionTextView = (TextView) findViewById(R.id.imageCaption);
         final TextView messageText = (TextView) findViewById(R.id.messageText);
         messageText.setVisibility(View.INVISIBLE);
         _gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener()
@@ -55,14 +55,14 @@ public class PhotoDisplayActivity extends Activity
             @Override
             public boolean onSingleTapUp(MotionEvent e)
             {
-                textView.setVisibility(textView.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
+                captionTextView.setVisibility(captionTextView.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
                 return false;
             }
 
             @Override
             public void onLongPress(MotionEvent e)
             {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://jeckels.com/photoDetail?PhotoId=" + _currentPhoto.getPhoto().getPhotoId() + "&ReferringCategoryId=" + _currentPhoto.getCategory().getCategoryId()));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(PhotoStore.BASE_URL + "/category/" + _currentPhoto.getCategory().getCategoryId() + "/" + _currentPhoto.getPhoto().getPhotoId()));
                 startActivity(browserIntent);
             }
 
@@ -93,7 +93,26 @@ public class PhotoDisplayActivity extends Activity
                 protected void onPostExecute(DisplayablePhoto photo)
                 {
                     imageView.setImageBitmap(photo.getBitmap());
-                    textView.setText(photo.getPhoto().getCaption());
+
+                    SimpleCategory category = photo.getCategory();
+                    StringBuilder caption = new StringBuilder(category.getDescription());
+
+                    while (category != null && category.getParentCategoryId() != null)
+                    {
+                        category = photo.getPhotoStore().getCategory(category.getParentCategoryId().intValue());
+                        if (category != null)
+                        {
+                            caption.insert(0, category.getDescription() + ": ");
+                        }
+                    }
+
+                    caption.append("\n");
+                    if (photo.getPhoto().getCaption() != null)
+                    {
+                        caption.append(photo.getPhoto().getCaption());
+                    }
+
+                    captionTextView.setText(caption);
                     _currentPhoto = photo;
                 }
             };

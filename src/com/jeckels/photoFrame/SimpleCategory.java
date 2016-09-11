@@ -15,7 +15,7 @@ public class SimpleCategory extends Scoreable<Calendar>
     private Integer _score;
 
     private List<SimplePhoto> _photos;
-    private int _parentCategoryId;
+    private Integer _parentCategoryId;
 
     public SimpleCategory()
     {
@@ -37,12 +37,12 @@ public class SimpleCategory extends Scoreable<Calendar>
         _description = description;
     }
 
-    public void setParentCategoryId(int parentCategoryId)
+    public void setParentCategoryId(Integer parentCategoryId)
     {
         _parentCategoryId = parentCategoryId;
     }
 
-    public int getParentCategoryId()
+    public Integer getParentCategoryId()
     {
         return _parentCategoryId;
     }

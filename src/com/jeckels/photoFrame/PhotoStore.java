@@ -15,7 +15,7 @@ public class PhotoStore
     private Map<Integer, SimpleCategory> _categories = new HashMap<>();
     private Map<Integer, SimplePhoto> _photos = new HashMap<>();
 
-    public static final String BASE_URL = "http://192.168.1.90";
+    public static final String BASE_URL = "http://jeckels.com";
 
     public PhotoStore()
     {
@@ -65,5 +65,10 @@ public class PhotoStore
     public static <T> T fromJSON(final TypeReference<T> type, final URL url) throws IOException
     {
         return new ObjectMapper().readValue(url, type);
+    }
+
+    public SimpleCategory getCategory(int i)
+    {
+        return _categories.get(i);
     }
 }

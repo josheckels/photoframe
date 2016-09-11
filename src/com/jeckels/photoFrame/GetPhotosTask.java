@@ -42,12 +42,14 @@ public abstract class GetPhotosTask extends AsyncTask<Object, Object, GetPhotosT
         private final Bitmap _bitmap;
         private final SimplePhoto _photo;
         private final SimpleCategory _category;
+        private final PhotoStore _photoStore;
 
-        public DisplayablePhoto(Bitmap bitmap, SimplePhoto photo, SimpleCategory category)
+        public DisplayablePhoto(Bitmap bitmap, SimplePhoto photo, SimpleCategory category, PhotoStore photoStore)
         {
             _bitmap = bitmap;
             _photo = photo;
             _category = category;
+            _photoStore = photoStore;
         }
 
         public Bitmap getBitmap()
@@ -63,6 +65,11 @@ public abstract class GetPhotosTask extends AsyncTask<Object, Object, GetPhotosT
         public SimpleCategory getCategory()
         {
             return _category;
+        }
+
+        public PhotoStore getPhotoStore()
+        {
+            return _photoStore;
         }
     }
 
